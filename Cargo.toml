@@ -10,8 +10,7 @@ anathema = { workspace = true }
 anyhow = "1.0.98"
 
 [workspace.dependencies]
-# anathema = "0.2.10"
-anathema = { path = "../anathema" }
+anathema = "0.2.11"
 unicode-width = "0.2.1"
 parser = { path = "./parser" }
 ui = { path = "./ui" }

@@ -8,14 +8,17 @@ Create a `example.echo` file and add the following code:
 ```rust
 // example.echo
 extension "rs"
-speed 100
+speed 65
 
-type "fn pain() {
+linepause 1000
+
+type "// @marker
+fn pain() {
 }"
 
 typenl '    println!("hello world");'
 
-goto -1 0
+goto marker
 
 replace "pain" "main"
 ```
