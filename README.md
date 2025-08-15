@@ -2,10 +2,34 @@
 
 Script and playback of text with syntax highlighting.
 
+## Example
+
+Create a `example.echo` file and add the following code:
+```rust
+// example.echo
+extension "rs"
+speed 100
+
+type "fn pain() {
+}"
+
+typenl '    println!("hello world");'
+
+goto -1 0
+
+replace "pain" "main"
+```
+Then run it with:
+```bash
+$ parrot example.echo
+```
+
+## Syntax
+
 To add syntax highlighting for a language currently not included:
 Copy the directory into your equivalent of `~/.config/parrot/syntax/<lang>`.
 
-## Example
+### Example
 
 To add support for `TOML` copy the `TOML` directory from this repository into `~/.config/parrot/syntax/TOML`.
 

@@ -1,0 +1,11 @@
+extension "rs"
+speed 100
+
+type "fn pain() {
+}"
+
+typenl '    println!("hello world");'
+
+goto -1 0
+
+replace "pain" "main"
