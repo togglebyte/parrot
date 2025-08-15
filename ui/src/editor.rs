@@ -179,11 +179,8 @@ impl Editor {
                     self.cursor.y = row as i32;
                     self.cursor.x = 0;
                 }
+                Instruction::Select(size) if size == Size::ZERO => return RenderAction::Render,
                 Instruction::Select(size) => {
-                    if size == Size::ZERO {
-                        return RenderAction::Render;
-                    }
-
                     let visual_range = VisualRange::new(self.cursor, size);
                     self.cursor = visual_range.region.to - Pos::new(1, 1);
                     self.selected_range = Some(visual_range);

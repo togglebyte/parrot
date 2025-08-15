@@ -159,15 +159,14 @@ impl<'src> Parser<'src> {
 
     fn select(&mut self) -> Result<Instruction> {
         let instr = match self.tokens.take() {
-            // Token::Ident(ident) => Instruction::Select(Dest::Marker(ident)),
             Token::Int(width) => match self.tokens.take() {
                 Token::Int(height) => Instruction::Select {
                     width: width as u16,
                     height: height as u16,
                 },
-                token => return Error::invalid_arg("number", token, self.tokens.spans(), self.tokens.source),
+                token => return Error::invalid_arg("col", token, self.tokens.spans(), self.tokens.source),
             },
-            token => return Error::invalid_arg("ident or row", token, self.tokens.spans(), self.tokens.source),
+            token => return Error::invalid_arg("row", token, self.tokens.spans(), self.tokens.source),
         };
 
         Ok(instr)

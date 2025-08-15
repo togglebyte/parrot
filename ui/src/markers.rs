@@ -1,5 +1,11 @@
 use anathema::geometry::Pos;
 
+static SYMBOLS: &[&str] = &["//", "#", ";;", ";", "--"];
+
+// If a string is less than this many bytes
+// it could not possibly hold a marker
+const MIN_POSSIBLE_LEN: usize = 3;
+
 pub fn generate(text: impl Into<String>) -> (String, Option<Markers>) {
     let mut markers = vec![];
 
@@ -12,7 +18,7 @@ pub fn generate(text: impl Into<String>) -> (String, Option<Markers>) {
                 markers.push(marker);
                 None
             }
-            None => Some(line.to_string()),
+            None => Some(escape_marker(line)),
         })
         .collect();
 
@@ -49,12 +55,6 @@ impl From<&Marker> for Pos {
 // 4. Position of '@'
 // 5. Marker = line[pos..].take_while(char::is_ascii_alphabetic].join()
 fn marker(offset: usize, line: &str) -> Option<Marker> {
-    static SYMBOLS: &[&str] = &["//", "#", ";;", ";", "--"];
-
-    // If a string is less than this many bytes
-    // it could not possibly hold a marker
-    const MIN_POSSIBLE_LEN: usize = 3;
-
     let mut line = line.trim_start();
 
     if line.len() < MIN_POSSIBLE_LEN {
@@ -68,7 +68,7 @@ fn marker(offset: usize, line: &str) -> Option<Marker> {
 
     line = line[symbol_len..].trim();
 
-    if line.is_empty() || line.as_bytes()[0] != b'@' {
+    if line.len() < 2 || line.as_bytes()[0] != b'@' || line.starts_with("@@") {
         return None;
     }
 
@@ -84,6 +84,39 @@ fn marker(offset: usize, line: &str) -> Option<Marker> {
         row: offset,
         name: marker.to_string(),
     })
+}
+
+fn escape_marker(input: &str) -> String {
+    let line = input.trim_start();
+
+    if line.len() < MIN_POSSIBLE_LEN {
+        return input.into();
+    }
+
+    let symbol_len = SYMBOLS
+        .iter()
+        .find(|symbol| line.starts_with(*symbol))
+        .map(|symbol| symbol.len());
+
+    let len = match symbol_len {
+        None => return input.into(),
+        Some(len) => len,
+    };
+
+    let diff = input.len() - line.len() + len;
+    let line = &input[diff..];
+
+    match line.trim().starts_with("@@") {
+        true => {
+            let offset = diff + line.len() - line.trim().len();
+            let (a, b) = input.split_at(offset);
+            let mut buffer = String::with_capacity(input.len() - 1);
+            buffer.push_str(a);
+            buffer.push_str(&b[1..]);
+            buffer
+        }
+        false => input.into(),
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -204,5 +237,13 @@ c"
         assert_eq!(&markers.inner[0].name, "A");
         assert_eq!(&markers.inner[1].name, "B");
         assert_eq!(&markers.inner[2].name, "C");
+    }
+
+    #[test]
+    fn escape_markers() {
+        let input = "  // @@escape";
+        let actual = escape_marker(input);
+        let expected = "  // @escape";
+        assert_eq!(expected, &*actual);
     }
 }

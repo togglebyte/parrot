@@ -65,10 +65,9 @@ Syntax: `insert <marker>|<string>` or `insert <string>`
 
 ## Select
 
-Select the text from the current cursor position to a marker if a marker named is given, or to a relative position.
-The position is given as `width` and `height`.
+Select the text from the current cursor position given a width and a height.
 
-Syntax: `select <marker>|<width> <height>`
+Syntax: `select <width> <height>`
             
 ## Type
 

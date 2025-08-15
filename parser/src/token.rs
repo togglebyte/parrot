@@ -7,6 +7,7 @@ pub enum Token {
     Bang,
     Equal,
     At,
+    AtAt,
 
     // Multi char tokens
     As,
@@ -51,6 +52,7 @@ impl Display for Token {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Token::At => write!(f, "@"),
+            Token::AtAt => write!(f, "@@"),
             Token::Equal => write!(f, "="),
             Token::Bang => write!(f, "!"),
             Token::Newline => write!(f, "<nl>"),

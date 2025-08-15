@@ -55,6 +55,12 @@ impl<'src> Lexer<'src> {
         self.push_token(token);
     }
 
+    fn multi_char_token(&mut self, token: Token) {
+        _ = self.input.next();
+        self.next_span.col += 2;
+        self.push_token(token);
+    }
+
     fn lex(mut self) -> Result<Tokens<'src>> {
         loop {
             let Some(c) = self.input.next() else { break };
@@ -64,6 +70,7 @@ impl<'src> Lexer<'src> {
                 //   - Multi char tokens-
                 // -----------------------------------------------------------------------------
                 '/' if Some('/') == self.input.peek().copied() => self.comment(),
+                '@' if Some('@') == self.input.peek().copied() => self.multi_char_token(Token::AtAt),
 
                 // -----------------------------------------------------------------------------
                 //   - Single char tokens -
