@@ -7,11 +7,8 @@ Usage
 -----
 
 parrot <file path>
-or
-parrot <file path> <comment prefix>
 
-example: play back code.echo with `#` as the comments
-parrot code.echo #
+example: parrot code.echo
 
 For more information see https://github.com/togglebyte/parrot
 ");

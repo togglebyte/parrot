@@ -198,7 +198,7 @@ impl Editor {
     }
 
     fn update_cursor(&mut self, size: Size, state: &mut DocState) {
-        static PADDING: i32 = 5;
+        static PADDING: i32 = 7;
 
         let height = size.height as i32 - 1 - PADDING;
         let width = size.width as i32 - 1;
