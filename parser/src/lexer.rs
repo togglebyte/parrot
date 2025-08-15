@@ -142,6 +142,7 @@ impl<'src> Lexer<'src> {
 
         let token = match buffer.as_str() {
             "as" => Token::As,
+            "audio" => Token::Audio,
             "clear" => Token::Clear,
             "delete" => Token::Delete,
             "extension" => Token::SetExtension,

@@ -8,6 +8,7 @@ use crate::error::Result;
 use crate::instructions::Instruction;
 use crate::syntax::Highlighter;
 
+mod audio;
 mod compile;
 mod context;
 mod document;

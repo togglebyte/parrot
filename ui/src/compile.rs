@@ -83,6 +83,7 @@ pub fn compile(parsed_instructions: parser::Instructions) -> Result<Vec<Instruct
             parser::Instruction::ShowLineNumbers(show) => instructions.push(Instruction::ShowLineNumbers(show)),
             parser::Instruction::Jitter(jitter) => instructions.push(Instruction::SetJitter(jitter)),
             parser::Instruction::SetTheme(theme) => instructions.push(Instruction::SetTheme(theme)),
+            parser::Instruction::LoadAudio(path) => instructions.push(Instruction::LoadAudio(path)),
             parser::Instruction::Clear => instructions.push(Instruction::Clear),
         }
     }

@@ -195,11 +195,11 @@ c"
         });
 
         // Insert A before B
-        markers.merge(0, 1, other);
+        markers.merge(0, other);
 
         assert_eq!(markers.inner[0].row, 0);
-        assert_eq!(markers.inner[1].row, 1);
-        assert_eq!(markers.inner[2].row, 2);
+        assert_eq!(markers.inner[1].row, 0);
+        assert_eq!(markers.inner[2].row, 1);
 
         assert_eq!(&markers.inner[0].name, "A");
         assert_eq!(&markers.inner[1].name, "B");

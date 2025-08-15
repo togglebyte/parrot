@@ -37,8 +37,6 @@ impl TextBuffer {
         self.index += next_index;
 
         Some(retval)
-
-        
     }
 }
 

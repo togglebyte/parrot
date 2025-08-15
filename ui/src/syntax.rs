@@ -152,7 +152,11 @@ impl Highlighter {
             .find_syntax_by_extension(ext)
             .unwrap_or_else(|| self.set.find_syntax_plain_text());
 
-        let theme = self.theme_set.themes.get(theme_name).ok_or_else(|| Error::InvalidTheme(theme_name.into()))?;
+        let theme = self
+            .theme_set
+            .themes
+            .get(theme_name)
+            .ok_or_else(|| Error::InvalidTheme(theme_name.into()))?;
         let mut h = HighlightLines::new(syntax, theme);
 
         for line in LinesWithEndings::from(src) {
