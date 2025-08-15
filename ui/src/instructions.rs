@@ -30,6 +30,8 @@ pub enum Instruction {
     FindInCurrentLine(String),
 
     SetTitle(String),
+    SetExtension(String),
+    SetJitter(u64),
     ShowLineNumbers(bool),
     AddMarkers { row: usize, markers: Markers },
     Clear,

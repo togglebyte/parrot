@@ -5,7 +5,6 @@ pub use compile::compile;
 
 use crate::editor::Editor;
 use crate::instructions::Instruction;
-use crate::random::Random;
 
 mod compile;
 mod context;

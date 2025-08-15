@@ -7,10 +7,10 @@ use anathema::geometry::{LocalPos, Pos, Region, Size};
 use anathema::widgets::query::Elements;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
-use crate::Random;
 use crate::document::Document;
 use crate::instructions::Instruction;
 use crate::markers::generate;
+use crate::random::Random;
 use crate::syntax::{Highlighter, InactiveScratch};
 use crate::textbuffer::TextBuffer;
 
@@ -80,6 +80,8 @@ pub struct Editor {
     buffer: CanvasBuffer,
     lines: InactiveScratch,
     line_pause: Duration,
+    extension: String,
+    jitter: u64,
 }
 
 impl Editor {
@@ -98,6 +100,8 @@ impl Editor {
             buffer: CanvasBuffer::default(),
             lines: InactiveScratch::new(),
             line_pause: Duration::ZERO,
+            extension: "txt".into(),
+            jitter: 20,
         }
     }
 
@@ -193,12 +197,14 @@ impl Editor {
                 }
                 Instruction::LinePause(duration) => self.line_pause = duration,
                 Instruction::SetTitle(title) => state.title.set(title),
+                Instruction::SetJitter(jitter) => self.jitter = jitter,
                 Instruction::ShowLineNumbers(show) => state.show_line_numbers.set(show),
                 Instruction::Clear => {
                     self.doc.clear();
                     self.offset = Pos::ZERO;
                     self.cursor = Pos::ZERO;
                 }
+                Instruction::SetExtension(ext) => self.extension = ext,
             },
         }
 
@@ -243,7 +249,7 @@ impl Editor {
             // re-highlight the content
             let scratch = unsafe { self.lines.activate(self.doc.text()) };
             scratch.with(|lines, code| {
-                self.highlighter.highlight(code, "rs", lines);
+                self.highlighter.highlight(code, &self.extension, lines);
 
                 let skip = (y < 0).then_some(y.abs() as usize).unwrap_or(0);
                 y = 0;
@@ -307,7 +313,7 @@ impl Component for Editor {
             return;
         }
 
-        self.current_time = self.frame_time + Duration::from_millis(self.rand.next(20));
+        self.current_time = self.frame_time + Duration::from_millis(self.rand.next(self.jitter));
         if let RenderAction::Render = self.apply(state) {
             self.update_cursor(size, state);
             self.draw(children.elements());

@@ -65,12 +65,14 @@ Syntax: `wait <seconds>`
 Set the speed for which commands are executed / content is typed
 
 Syntax: `speed <milliseconds>`
+Default: `20`
 
 ## Line pause
 
 Set the speed for which to wait after each newline char is typed
 
 Syntax: `linepause <milliseconds>`
+Default: `0`
             
 ## Replace
 
@@ -83,9 +85,24 @@ Syntax: `replace <string> <ident>|<string>`
 Show / hide line numbers
 
 Syntax: `numbers <true|false>`
+Default: `false`
 
 ## Clear
 
 Clear the screen
 
 Syntax: `clear`
+
+## Extension
+
+Set the file extension for the syntax highlighter
+
+Syntax: `extension "rs"`
+Default: `"txt"`
+
+## Jitter
+
+Pad the frame time with some jitter, making for a more natural appearance of
+typing.
+
+Syntax: `jitter 25`

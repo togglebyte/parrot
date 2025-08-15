@@ -79,7 +79,9 @@ pub fn compile(parsed_instructions: parser::Instructions) -> Result<Vec<Instruct
                 instructions.push(Instruction::LinePause(Duration::from_millis(millis)))
             }
             parser::Instruction::SetTitle(title) => instructions.push(Instruction::SetTitle(title)),
+            parser::Instruction::SetExtension(ext) => instructions.push(Instruction::SetExtension(ext)),
             parser::Instruction::ShowLineNumbers(show) => instructions.push(Instruction::ShowLineNumbers(show)),
+            parser::Instruction::Jitter(jitter) => instructions.push(Instruction::SetJitter(jitter)),
             parser::Instruction::Clear => instructions.push(Instruction::Clear),
         }
     }

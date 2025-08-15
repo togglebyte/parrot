@@ -35,6 +35,7 @@ pub enum Instruction {
         prefix_newline: bool,
     },
     Insert(Source),
+    Jitter(u64),
     Delete,
 
     /// This instructions requires that the cursor is placed on the
@@ -57,6 +58,7 @@ pub enum Instruction {
         height: u16,
     },
     SetTitle(String),
+    SetExtension(String),
     ShowLineNumbers(bool),
     LinePause(u64),
     Speed(u64),

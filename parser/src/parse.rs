@@ -59,9 +59,11 @@ impl<'src> Parser<'src> {
             Token::Select => self.select(),
             Token::Find => self.find(),
             Token::LinePause => self.linepause(),
+            Token::SetExtension => self.set_extension(),
             Token::SetTitle => self.set_title(),
             Token::ShowLineNumbers => self.numbers(),
             Token::Clear => self.clear(),
+            Token::Jitter => self.jitter(),
             Token::Wait => self.wait(),
             token => Error::invalid_instruction(token, self.tokens.spans(), self.tokens.source),
         }
@@ -187,6 +189,15 @@ impl<'src> Parser<'src> {
         Ok(instr)
     }
 
+    fn set_extension(&mut self) -> Result<Instruction> {
+        let instr = match self.tokens.take() {
+            Token::Str(ext) => Instruction::SetExtension(ext),
+            token => return Error::invalid_arg("string", token, self.tokens.spans(), self.tokens.source),
+        };
+
+        Ok(instr)
+    }
+
     fn set_title(&mut self) -> Result<Instruction> {
         let instr = match self.tokens.take() {
             Token::Str(title) => Instruction::SetTitle(title),
@@ -208,6 +219,16 @@ impl<'src> Parser<'src> {
     fn clear(&mut self) -> Result<Instruction> {
         Ok(Instruction::Clear)
     }
+
+    fn jitter(&mut self) -> Result<Instruction> {
+        let instr = match self.tokens.take() {
+            Token::Int(jitter) => Instruction::Jitter(jitter as u64),
+            token => return Error::invalid_arg("boolean", token, self.tokens.spans(), self.tokens.source),
+        };
+
+        Ok(instr)
+    }
+
 
     fn wait(&mut self) -> Result<Instruction> {
         let instr = match self.tokens.take() {
