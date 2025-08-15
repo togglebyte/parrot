@@ -2,6 +2,13 @@
 
 Script and playback of text with syntax highlighting.
 
+To add syntax highlighting for a language currently not included:
+Copy the directory into your equivalent of `~/.config/parrot/syntax/<lang>`.
+
+## Example
+
+To add support for `TOML` copy the `TOML` directory from this repository into `~/.config/parrot/syntax/TOML`.
+
 ## Commands
 
 ## Load
@@ -106,3 +113,10 @@ Pad the frame time with some jitter, making for a more natural appearance of
 typing.
 
 Syntax: `jitter 25`
+
+## Theme
+
+Set the theme.
+To see a list of themes run `parrot --themes`.
+
+Syntax: `theme <string>`

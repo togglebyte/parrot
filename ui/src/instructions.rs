@@ -32,6 +32,7 @@ pub enum Instruction {
     SetTitle(String),
     SetExtension(String),
     SetJitter(u64),
+    SetTheme(String),
     ShowLineNumbers(bool),
     AddMarkers { row: usize, markers: Markers },
     Clear,

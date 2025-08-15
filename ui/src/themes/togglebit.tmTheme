@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>author</key>
-	<string>Chris Kempson (http://chriskempson.com)</string>
+	<string>Togglebit</string>
 	<key>name</key>
-	<string>Base16 Ocean Dark</string>
+	<string>Togglebit</string>
 	<key>semanticClass</key>
-	<string>base16.ocean.dark</string>
+	<string>togglebit</string>
 	<key>colorSpaceName</key>
 	<string>sRGB</string>
 	<key>gutterSettings</key>
@@ -56,7 +56,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ff0000</string>
+				<string>#5fd7ff</string>
 			</dict>
 		</dict>
 		<dict>
@@ -146,7 +146,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ff0000</string>
+				<string>#5fd7ff</string>
 			</dict>
 		</dict>
 		<dict>
@@ -157,7 +157,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ff0000</string>
+				<string>#5fd7ff</string>
 			</dict>
 		</dict>
 		<dict>
@@ -168,7 +168,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ff0000</string>
+				<string>#5fd7ff</string>
 			</dict>
 		</dict>
 		<dict>
@@ -258,7 +258,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ff0000</string>
+				<string>#5fd7ff</string>
 			</dict>
 		</dict>
 		<dict>

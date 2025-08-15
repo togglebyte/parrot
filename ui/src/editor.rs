@@ -82,10 +82,11 @@ pub struct Editor {
     line_pause: Duration,
     extension: String,
     jitter: u64,
+    theme: String,
 }
 
 impl Editor {
-    pub fn new(instructions: Vec<Instruction>, frame_time: Duration) -> Self {
+    pub fn new(instructions: Vec<Instruction>, highlighter: Highlighter, frame_time: Duration) -> Self {
         Self {
             doc: Document::new(String::new()),
             cursor: Pos::ZERO,
@@ -95,13 +96,14 @@ impl Editor {
             current_time: Duration::ZERO,
             instructions: instructions.into(),
             type_buffer: TextBuffer::new(),
-            highlighter: Highlighter::new(),
+            highlighter,
             rand: Random::new(),
             buffer: CanvasBuffer::default(),
             lines: InactiveScratch::new(),
             line_pause: Duration::ZERO,
             extension: "txt".into(),
             jitter: 20,
+            theme: String::from("togglebit"),
         }
     }
 
@@ -205,6 +207,7 @@ impl Editor {
                     self.cursor = Pos::ZERO;
                 }
                 Instruction::SetExtension(ext) => self.extension = ext,
+                Instruction::SetTheme(theme) => self.theme = theme,
             },
         }
 
@@ -239,7 +242,7 @@ impl Editor {
         state.offset_y.set(self.offset.y);
     }
 
-    fn draw(&mut self, mut elements: Elements<'_, '_, '_>) {
+    fn draw(&mut self, mut elements: Elements<'_, '_, '_>, state: &mut DocState) {
         elements.by_tag("canvas").first(|el, _| {
             let canvas = el.to::<Canvas>();
             canvas.clear();
@@ -248,8 +251,8 @@ impl Editor {
 
             // re-highlight the content
             let scratch = unsafe { self.lines.activate(self.doc.text()) };
-            scratch.with(|lines, code| {
-                self.highlighter.highlight(code, &self.extension, lines);
+            let res = scratch.with(|lines, code| {
+                self.highlighter.highlight(&self.theme, code, &self.extension, lines)?;
 
                 let skip = (y < 0).then_some(y.abs() as usize).unwrap_or(0);
                 y = 0;
@@ -274,7 +277,13 @@ impl Editor {
 
                     y += 1;
                 }
+
+                Ok::<_, crate::error::Error>(())
             });
+
+            if let Err(e) = res {
+                self.error(state, e.to_string());
+            }
         });
     }
 }
@@ -316,7 +325,7 @@ impl Component for Editor {
         self.current_time = self.frame_time + Duration::from_millis(self.rand.next(self.jitter));
         if let RenderAction::Render = self.apply(state) {
             self.update_cursor(size, state);
-            self.draw(children.elements());
+            self.draw(children.elements(), state);
         }
     }
 

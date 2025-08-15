@@ -16,6 +16,6 @@ impl Context {
 
     pub fn load(&self, key: impl AsRef<str>) -> Result<String> {
         let key = key.as_ref();
-        self.data.get(key).cloned().ok_or_else(|| Error::Load(key.into()))
+        self.data.get(key).cloned().ok_or_else(|| Error::LoadValue(key.into()))
     }
 }

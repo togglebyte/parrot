@@ -1,8 +1,11 @@
 use anathema::state::Color;
 use syntect::easy::HighlightLines;
-use syntect::highlighting::{FontStyle, Style, Theme, ThemeSet};
+use syntect::highlighting::{FontStyle, Style, ThemeSet};
 use syntect::parsing::SyntaxSet;
 use syntect::util::LinesWithEndings;
+
+use crate::error::{Error, Result};
+use crate::setup_paths::{syntax_root, theme_root};
 
 // -----------------------------------------------------------------------------
 //   - Scratch buffer -
@@ -30,11 +33,11 @@ pub struct ActiveScratch<'a> {
 }
 
 impl ActiveScratch<'_> {
-    pub fn with<F>(self, mut f: F)
+    pub fn with<F, U>(self, mut f: F) -> U
     where
-        for<'a> F: FnMut(&mut Lines<'a>, &'a str),
+        for<'a> F: FnMut(&mut Lines<'a>, &'a str) -> U,
     {
-        f(self.lines, self.code);
+        f(self.lines, self.code)
     }
 }
 
@@ -114,52 +117,65 @@ impl Span<'_> {
 //   - Highligher -
 // -----------------------------------------------------------------------------
 pub struct Highlighter {
-    ps: SyntaxSet,
-    theme: Theme,
+    set: SyntaxSet,
+    theme_set: ThemeSet,
 }
 
 impl Highlighter {
     pub fn new() -> Self {
         #[cfg(not(debug_assertions))]
-        let ps = SyntaxSet::load_defaults_newlines();
+        let set = SyntaxSet::load_defaults_newlines();
         #[cfg(debug_assertions)]
-        let ps = SyntaxSet::new();
-        let mut builder = ps.into_builder();
+        let set = SyntaxSet::new();
+        let mut builder = set.into_builder();
 
         // Try to load syntaxes from a config dir
-        let root = dirs::config_dir().unwrap().join("parrot");
-        let syntaxes = root.join("syntax");
+        let syntaxes = syntax_root();
         _ = builder.add_from_folder(syntaxes, true);
 
         builder.add_plain_text_syntax();
-        let ps = builder.build();
+        let set = builder.build();
 
-        // Set the theme
-        // TODO: fall back to another theme.
-        // Maybe add an actual config file where this can be specified?
-        let theme_path = root.join("theme");
-        let theme = ThemeSet::get_theme(theme_path).expect("missing theme");
+        let mut theme_set = ThemeSet::load_defaults();
+        theme_set
+            .add_from_folder(theme_root())
+            .expect("the theme directory should be created the first time the program is run");
 
-        Self { ps, theme }
+        Self { set, theme_set }
     }
 
-    pub fn highlight<'a>(&self, src: &'a str, ext: &str, buffer: &mut Lines<'a>) {
+    pub fn highlight<'a>(&self, theme_name: &str, src: &'a str, ext: &str, buffer: &mut Lines<'a>) -> Result<()> {
         buffer.reset();
 
         let syntax = self
-            .ps
+            .set
             .find_syntax_by_extension(ext)
-            .unwrap_or_else(|| self.ps.find_syntax_plain_text());
+            .unwrap_or_else(|| self.set.find_syntax_plain_text());
 
-        let mut h = HighlightLines::new(syntax, &self.theme);
+        let theme = self.theme_set.themes.get(theme_name).ok_or_else(|| Error::InvalidTheme(theme_name.into()))?;
+        let mut h = HighlightLines::new(syntax, theme);
 
         for line in LinesWithEndings::from(src) {
             // LinesWithEndings enables use of newlines mode
-            let spans = h.highlight_line(line, &self.ps).unwrap();
+            let spans = h.highlight_line(line, &self.set)?;
             for (style, src) in spans {
                 buffer.push_span(Span { style, src });
             }
             buffer.newline();
+        }
+
+        Ok(())
+    }
+
+    pub(crate) fn print_syntaxes(&self) {
+        for syntax in self.set.syntaxes() {
+            println!("{}", syntax.name);
+        }
+    }
+
+    pub(crate) fn print_themes(&self) {
+        for name in self.theme_set.themes.keys() {
+            println!("{name}");
         }
     }
 }

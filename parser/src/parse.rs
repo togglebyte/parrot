@@ -64,6 +64,7 @@ impl<'src> Parser<'src> {
             Token::ShowLineNumbers => self.numbers(),
             Token::Clear => self.clear(),
             Token::Jitter => self.jitter(),
+            Token::Theme => self.theme(),
             Token::Wait => self.wait(),
             token => Error::invalid_instruction(token, self.tokens.spans(), self.tokens.source),
         }
@@ -229,6 +230,14 @@ impl<'src> Parser<'src> {
         Ok(instr)
     }
 
+    fn theme(&mut self) -> Result<Instruction> {
+        let instr = match self.tokens.take() {
+            Token::Str(theme) => Instruction::SetTheme(theme),
+            token => return Error::invalid_arg("boolean", token, self.tokens.spans(), self.tokens.source),
+        };
+
+        Ok(instr)
+    }
 
     fn wait(&mut self) -> Result<Instruction> {
         let instr = match self.tokens.take() {

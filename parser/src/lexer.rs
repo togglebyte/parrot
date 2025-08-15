@@ -159,6 +159,7 @@ impl<'src> Lexer<'src> {
             "speed" => Token::Speed,
             "title" => Token::SetTitle,
             "true" => Token::Bool(true),
+            "theme" => Token::Theme,
             "type" => Token::Type,
             "typenl" => Token::TypeNl,
             "wait" | "sleep" => Token::Wait,
