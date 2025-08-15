@@ -8,4 +8,4 @@ anathema = { workspace = true }
 dirs = "6.0.0"
 syntect = { version = "5.2.0" }
 unicode-width = { workspace = true }
-vm = { workspace = true }
+parser = { workspace = true }

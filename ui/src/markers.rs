@@ -90,7 +90,7 @@ fn marker(offset: usize, line: &str) -> Option<Marker> {
 //   - Markers -
 // -----------------------------------------------------------------------------
 #[derive(Debug)]
-pub(crate) struct Markers {
+pub struct Markers {
     inner: Vec<Marker>,
 }
 

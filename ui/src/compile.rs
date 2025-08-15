@@ -6,11 +6,7 @@ use unicode_width::UnicodeWidthStr;
 
 pub use crate::context::Context;
 use crate::error::{Error, Result};
-pub use crate::instructions::Instruction;
-
-mod context;
-mod error;
-mod instructions;
+use crate::instructions::Instruction;
 
 pub fn compile(parsed_instructions: parser::Instructions) -> Result<Vec<Instruction>> {
     let mut context = Context::new();
@@ -92,5 +88,4 @@ pub fn compile(parsed_instructions: parser::Instructions) -> Result<Vec<Instruct
 }
 
 #[cfg(test)]
-mod test {
-}
+mod test {}

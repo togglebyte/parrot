@@ -1,8 +1,11 @@
 use std::env::args;
+
 use parser::parse;
+use ui::compile;
 
 fn help() {
-    println!("
+    println!(
+        "
 Usage
 -----
 
@@ -11,7 +14,8 @@ parrot <file path>
 example: parrot code.echo
 
 For more information see https://github.com/togglebyte/parrot
-");
+"
+    );
 }
 
 fn main() -> anyhow::Result<()> {
@@ -21,11 +25,9 @@ fn main() -> anyhow::Result<()> {
         return Ok(());
     };
 
-    // let path = "/media/rustvids/anathema/hackbar/i3.echo";
-
     let code = std::fs::read_to_string(path)?;
     let instructions = parse(&code)?;
-    let instructions = vm::compile(instructions)?;
+    let instructions = compile(instructions)?;
     ui::run(instructions);
     Ok(())
 }

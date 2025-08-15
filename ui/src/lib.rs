@@ -1,27 +1,31 @@
 use std::time::Duration;
 
 use anathema::prelude::*;
-use vm::Instruction;
+pub use compile::compile;
 
 use crate::editor::Editor;
+use crate::instructions::Instruction;
 use crate::random::Random;
 
+mod compile;
+mod context;
 mod document;
 mod editor;
+mod error;
+mod instructions;
 mod markers;
 mod random;
 pub(crate) mod syntax;
 mod textbuffer;
 
 pub fn run(instructions: Vec<Instruction>) {
-    let editor = Editor::new(instructions, Duration::from_millis(20));
+    let editor = Editor::new(instructions, Duration::from_millis(70));
 
     let doc = Document::new("@index");
 
     let mut backend = TuiBackend::builder()
         .enable_alt_screen()
         .enable_raw_mode()
-        .clear()
         .hide_cursor()
         .finish()
         .unwrap();

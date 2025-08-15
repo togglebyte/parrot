@@ -2,6 +2,8 @@ use std::time::Duration;
 
 use anathema::geometry::{Pos, Size};
 
+use crate::markers::Markers;
+
 #[derive(Debug)]
 pub enum Instruction {
     // Relative jump
@@ -29,5 +31,6 @@ pub enum Instruction {
 
     SetTitle(String),
     ShowLineNumbers(bool),
+    AddMarkers { row: usize, markers: Markers },
     Clear,
 }

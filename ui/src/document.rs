@@ -22,8 +22,8 @@ impl Document {
         Self { text, markers }
     }
 
-    pub fn add_markers(&mut self, row: i32, markers: Markers) {
-        self.markers.merge(row as usize, markers);
+    pub fn add_markers(&mut self, row: usize, markers: Markers) {
+        self.markers.merge(row, markers);
     }
 
     pub fn text(&self) -> &str {

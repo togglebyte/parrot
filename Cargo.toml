@@ -6,7 +6,6 @@ edition = "2024"
 [dependencies]
 parser = { path = "./parser" }
 ui = { path = "./ui" }
-vm = { path = "./vm" }
 anathema = { workspace = true }
 anyhow = "1.0.98"
 
@@ -16,13 +15,11 @@ anathema = { path = "../anathema" }
 unicode-width = "0.2.1"
 parser = { path = "./parser" }
 ui = { path = "./ui" }
-vm = { path = "./vm" }
 
 [workspace]
 members = [
     "parser",
     "ui",
-    "vm",
 ]
 
 [lints]
@@ -30,7 +27,6 @@ workspace = true
 
 [profile.release]
 debug = true
-
 
 [workspace.lints.rust]
 rust_2018_idioms = "deny"

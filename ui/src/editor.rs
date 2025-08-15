@@ -6,10 +6,10 @@ use anathema::default_widgets::{Canvas, CanvasBuffer};
 use anathema::geometry::{LocalPos, Pos, Region, Size};
 use anathema::widgets::query::Elements;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
-use vm::Instruction;
 
 use crate::Random;
 use crate::document::Document;
+use crate::instructions::Instruction;
 use crate::markers::generate;
 use crate::syntax::{Highlighter, InactiveScratch};
 use crate::textbuffer::TextBuffer;
@@ -111,7 +111,6 @@ impl Editor {
         // otherwise load the next instruction
         if let Some(s) = self.type_buffer.next() {
             // type next char
-            state.debug.set(format!("{s}"));
             self.doc.insert_str(self.cursor, s);
 
             if s == "\n" {
@@ -135,13 +134,30 @@ impl Editor {
                 Instruction::LoadTypeBuffer(content) => {
                     // Make markers and all that what what
                     let (content, markers) = generate(content);
-                    if let Some(markers) = markers {
-                        self.doc.add_markers(self.cursor.y, markers);
-                    }
                     self.type_buffer.push(content);
+
+                    if let Some(markers) = markers {
+                        self.instructions.push_front(Instruction::AddMarkers {
+                            row: self.cursor.y as usize,
+                            markers,
+                        });
+                    }
                 }
+                Instruction::Insert(content) => {
+                    let (content, markers) = generate(content);
+                    self.cursor.x = 0;
+                    self.doc.insert_str(self.cursor, &content);
+                    if let Some(markers) = markers {
+                        self.instructions.push_front(Instruction::AddMarkers {
+                            row: self.cursor.y as usize,
+                            markers,
+                        });
+                    }
+                }
+                Instruction::AddMarkers { row, markers } => self.doc.add_markers(row, markers),
                 Instruction::Jump(pos) => {
                     self.cursor += pos;
+                    // Don't move the cursor past zero
                     self.cursor.x = self.cursor.x.max(0);
                     self.cursor.y = self.cursor.y.max(0);
                 }
@@ -161,14 +177,6 @@ impl Editor {
                     let visual_range = VisualRange::new(self.cursor, size);
                     self.cursor = visual_range.region.to - Pos::new(1, 1);
                     self.selected_range = Some(visual_range);
-                }
-                Instruction::Insert(content) => {
-                    let (content, markers) = generate(content);
-                    self.cursor.x = 0;
-                    self.doc.insert_str(self.cursor, &content);
-                    if let Some(markers) = markers {
-                        self.doc.add_markers(self.cursor.y, markers);
-                    }
                 }
                 Instruction::Delete => match self.selected_range.take() {
                     Some(range) => {
@@ -271,11 +279,11 @@ impl Component for Editor {
 
     fn on_key(&mut self, key: KeyEvent, _: &mut Self::State, _: Children<'_, '_>, _: Context<'_, '_, Self::State>) {
         match key.code {
-            KeyCode::Char('h') => self.instructions.push_back(Instruction::Jump(Pos::new(-1, 0))),
-            KeyCode::Char('j') => self.instructions.push_back(Instruction::Jump(Pos::new(0, 1))),
-            KeyCode::Char('k') => self.instructions.push_back(Instruction::Jump(Pos::new(0, -1))),
-            KeyCode::Char('l') => self.instructions.push_back(Instruction::Jump(Pos::new(1, 0))),
-            KeyCode::Char('d') => self.instructions.push_back(Instruction::Jump(Pos::new(0, 9))),
+            // KeyCode::Char('h') => self.instructions.push_back(Instruction::Jump(Pos::new(-1, 0))),
+            // KeyCode::Char('j') => self.instructions.push_back(Instruction::Jump(Pos::new(0, 1))),
+            // KeyCode::Char('k') => self.instructions.push_back(Instruction::Jump(Pos::new(0, -1))),
+            // KeyCode::Char('l') => self.instructions.push_back(Instruction::Jump(Pos::new(1, 0))),
+            // KeyCode::Char('d') => self.instructions.push_back(Instruction::Jump(Pos::new(0, 9))),
             _ => {}
         }
     }

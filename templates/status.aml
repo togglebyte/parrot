@@ -1,4 +1,11 @@
-hstack [background: "grey", foreground: "black"]
+hstack [background: "grey", foreground: "black", height: 1]
+    text attributes.title
+
+    // if attributes.debug
+    //     if attributes.title
+    //         text " | "
+    //     text "debug: " attributes.debug
+
     spacer
     text "row: " attributes.row + 1 " "
     padding [right: 1]
