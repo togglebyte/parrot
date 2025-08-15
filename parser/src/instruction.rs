@@ -63,6 +63,7 @@ pub enum Instruction {
     ShowLineNumbers(bool),
     LinePause(u64),
     Speed(u64),
+    LoadAudio(PathBuf),
     Clear,
     Wait(u64),
 }

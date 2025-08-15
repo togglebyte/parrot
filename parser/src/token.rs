@@ -10,6 +10,7 @@ pub enum Token {
 
     // Multi char tokens
     As,
+    Audio,
     Delete,
     Bool(bool),
     Int(i64),
@@ -62,6 +63,7 @@ impl Display for Token {
             Token::Str(s) => write!(f, "\"{s}\""),
             Token::Bool(b) => write!(f, "{b}"),
 
+            Token::Audio => write!(f, "audio"),
             Token::Clear => write!(f, "clear"),
             Token::Find => write!(f, "find"),
             Token::Goto => write!(f, "goto"),
@@ -171,5 +173,4 @@ impl<'src> Tokens<'src> {
     pub fn take_tokens(self) -> Vec<Token> {
         self.tokens
     }
-
 }

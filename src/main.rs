@@ -31,12 +31,12 @@ fn main() -> anyhow::Result<()> {
 
     if arg == "--syntax" {
         ui::print_syntaxes();
-        return Ok(())
+        return Ok(());
     }
 
     if arg == "--themes" {
         ui::print_themes();
-        return Ok(())
+        return Ok(());
     }
 
     let echo = std::fs::read_to_string(arg)?;

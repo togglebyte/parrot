@@ -147,3 +147,14 @@ Set the theme.
 To see a list of themes run `parrot --themes`.
 
 Syntax: `theme <string>`
+
+## Audio
+
+Load a directory with audio files for typing sounds.
+
+Each key will be mapped to an audio file with the same name.
+E.g `a` -> `a.mp3`, `_` -> `_.mp3`
+If no filename is found it will fallback to `default.mp3`.
+If `default.mp3` is missing an error will be raised.
+
+Syntax: `audio <filepath>`

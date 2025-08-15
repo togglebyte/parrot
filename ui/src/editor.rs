@@ -7,6 +7,7 @@ use anathema::geometry::{LocalPos, Pos, Region, Size};
 use anathema::widgets::query::Elements;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
+use crate::audio::AudioShell;
 use crate::document::Document;
 use crate::instructions::Instruction;
 use crate::markers::generate;
@@ -83,6 +84,7 @@ pub struct Editor {
     extension: String,
     jitter: u64,
     theme: String,
+    audio: AudioShell,
 }
 
 impl Editor {
@@ -104,6 +106,7 @@ impl Editor {
             extension: "txt".into(),
             jitter: 20,
             theme: String::from("togglebit"),
+            audio: AudioShell::new(),
         }
     }
 
@@ -117,6 +120,7 @@ impl Editor {
         // otherwise load the next instruction
         if let Some(s) = self.type_buffer.next() {
             // type next char
+            self.audio.play(s);
             self.doc.insert_str(self.cursor, s);
 
             if s == "\n" {
@@ -208,6 +212,11 @@ impl Editor {
                 }
                 Instruction::SetExtension(ext) => self.extension = ext,
                 Instruction::SetTheme(theme) => self.theme = theme,
+                Instruction::LoadAudio(path) => {
+                    if let Err(e) = self.audio.load(path) {
+                        self.error(state, e.to_string());
+                    }
+                }
             },
         }
 

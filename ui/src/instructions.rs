@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::time::Duration;
 
 use anathema::geometry::{Pos, Size};
@@ -20,7 +21,7 @@ pub enum Instruction {
     // Inserts all the content at once, unlike Type which types the content out
     // character by character
     Insert(String),
-    // Remove all character in the highlighted range of the editor, or 
+    // Remove all character in the highlighted range of the editor, or
     // if no selection exists: remove the character under the cursor
     Delete,
     Wait(Duration),
@@ -35,5 +36,6 @@ pub enum Instruction {
     SetTheme(String),
     ShowLineNumbers(bool),
     AddMarkers { row: usize, markers: Markers },
+    LoadAudio(PathBuf),
     Clear,
 }
