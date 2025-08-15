@@ -1,0 +1,16 @@
+zstack
+    vstack
+        // Editor
+        container 
+            expand
+                zstack
+                    canvas
+                    position [left: state.screen_cursor_x, top: state.screen_cursor_y]
+                        container [height: 1, width: 1, foreground: "black", background: "green"]
+
+        // Status bar
+        @status [row: state.cursor_y, col: state.cursor_x]
+
+    if state.error
+        @error [error: state.error]
+

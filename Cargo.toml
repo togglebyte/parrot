@@ -1,0 +1,45 @@
+[package]
+name = "parrot"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+parser = { path = "./parser" }
+ui = { path = "./ui" }
+vm = { path = "./vm" }
+anathema = { workspace = true }
+anyhow = "1.0.98"
+
+[workspace.dependencies]
+# anathema = "0.2.10"
+anathema = { path = "../anathema" }
+unicode-width = "0.2.1"
+parser = { path = "./parser" }
+ui = { path = "./ui" }
+vm = { path = "./vm" }
+
+[workspace]
+members = [
+    "parser",
+    "ui",
+    "vm",
+]
+
+[lints]
+workspace = true
+
+[profile.release]
+debug = true
+
+
+[workspace.lints.rust]
+rust_2018_idioms = "deny"
+
+[workspace.lints.clippy]
+from_over_into = "allow"
+len_without_is_empty = "allow"
+new_without_default = "allow"
+should_implement_trait = "allow"
+type_complexity = "allow"
+too_many_arguments = "allow"
+wrong_self_convention = "allow"

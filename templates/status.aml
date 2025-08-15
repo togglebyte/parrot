@@ -1,0 +1,6 @@
+hstack [background: "grey", foreground: "black"]
+    spacer
+    text "row: " attributes.row + 1 " "
+    padding [right: 1]
+        text "col: " attributes.col + 1
+

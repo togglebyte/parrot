@@ -1,0 +1,11 @@
+[package]
+name = "ui"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anathema = { workspace = true }
+dirs = "6.0.0"
+syntect = { version = "5.2.0" }
+unicode-width = { workspace = true }
+vm = { workspace = true }
