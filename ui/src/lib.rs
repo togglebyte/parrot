@@ -29,6 +29,7 @@ pub mod setup_paths {
     static INDEX: &[u8] = include_bytes!("templates/index.aml");
     static STATUS: &[u8] = include_bytes!("templates/status.aml");
     static ERROR: &[u8] = include_bytes!("templates/error.aml");
+    static POPUP: &[u8] = include_bytes!("templates/popup.aml");
     static THEME: &[u8] = include_bytes!("themes/togglebit.tmTheme");
 
     fn parrot_root() -> PathBuf {
@@ -61,7 +62,7 @@ pub mod setup_paths {
         _ = std::fs::create_dir_all(&syntax_dir);
         _ = std::fs::create_dir_all(&theme_dir);
 
-        for (path, content) in [("index.aml", INDEX), ("status.aml", STATUS), ("error.aml", ERROR)] {
+        for (path, content) in [("index.aml", INDEX), ("status.aml", STATUS), ("error.aml", ERROR), ("popup.aml", POPUP)] {
             let path = template_dir.join(path);
             let mut file = std::fs::File::create(&path).map_err(|_| Error::FilePath(path))?;
             file.write_all(content).expect("did you run out of disk space?");
@@ -106,6 +107,7 @@ pub fn run(instructions: Vec<Instruction>) -> Result<()> {
     builder.component("index", template_root.join("index.aml"), editor, Default::default())?;
     builder.template("status", template_root.join("status.aml"))?;
     builder.template("error", template_root.join("error.aml"))?;
+    builder.template("popup", template_root.join("popup.aml"))?;
     let res = builder.finish(&mut backend, |runtime, backend| runtime.run(backend));
 
     match res {

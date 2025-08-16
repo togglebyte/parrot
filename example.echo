@@ -9,6 +9,10 @@ fn pain() {
 
 typenl '    println!("hello world");'
 
+popup "we are now going to replace a word"
+sleep 3
+closepopup
+
 goto marker
 
 replace "pain" "main"

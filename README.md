@@ -157,3 +157,15 @@ If no filename is found it will fallback to `default.mp3`.
 If `default.mp3` is missing an error will be raised.
 
 Syntax: `audio <filepath>`
+
+## Popup
+
+Show a popup message
+
+Syntax: `popup "here be dragons"`
+
+## ClosePopup
+
+Close a popup message
+
+Syntax: `closepopup`

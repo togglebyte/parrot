@@ -5,10 +5,6 @@ use unicode_width::UnicodeWidthChar;
 
 use crate::markers::{Marker, Markers};
 
-// NOTE:
-// Document ONLY needs to regenerate the markers when
-// adding text that contains one or more markers!
-
 #[derive(Debug)]
 pub(crate) struct Document {
     pub markers: Markers,

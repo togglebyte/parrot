@@ -85,6 +85,8 @@ pub fn compile(parsed_instructions: parser::Instructions) -> Result<Vec<Instruct
             parser::Instruction::SetTheme(theme) => instructions.push(Instruction::SetTheme(theme)),
             parser::Instruction::LoadAudio(path) => instructions.push(Instruction::LoadAudio(path)),
             parser::Instruction::Clear => instructions.push(Instruction::Clear),
+            parser::Instruction::Popup(msg) => instructions.push(Instruction::Popup(msg)),
+            parser::Instruction::ClosePopup => instructions.push(Instruction::ClosePopup),
         }
     }
 

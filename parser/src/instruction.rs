@@ -64,6 +64,8 @@ pub enum Instruction {
     LinePause(u64),
     Speed(u64),
     LoadAudio(PathBuf),
+    Popup(String),
+    ClosePopup,
     Clear,
     Wait(u64),
 }

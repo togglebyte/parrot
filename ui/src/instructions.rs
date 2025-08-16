@@ -37,5 +37,7 @@ pub enum Instruction {
     ShowLineNumbers(bool),
     AddMarkers { row: usize, markers: Markers },
     LoadAudio(PathBuf),
+    Popup(String),
+    ClosePopup,
     Clear,
 }

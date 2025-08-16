@@ -66,6 +66,8 @@ impl<'src> Parser<'src> {
             Token::Jitter => self.jitter(),
             Token::Theme => self.theme(),
             Token::Audio => self.audio(),
+            Token::Popup => self.popup(),
+            Token::ClosePopup => self.closepopup(),
             Token::Wait => self.wait(),
             token => Error::invalid_instruction(token, self.tokens.spans(), self.tokens.source),
         }
@@ -246,6 +248,19 @@ impl<'src> Parser<'src> {
         };
 
         Ok(instr)
+    }
+
+    fn popup(&mut self) -> Result<Instruction> {
+        let instr = match self.tokens.take() {
+            Token::Str(msg) => Instruction::Popup(msg),
+            token => return Error::invalid_arg("string", token, self.tokens.spans(), self.tokens.source),
+        };
+
+        Ok(instr)
+    }
+
+    fn closepopup(&mut self) -> Result<Instruction> {
+        Ok(Instruction::ClosePopup)
     }
 
     fn wait(&mut self) -> Result<Instruction> {

@@ -162,6 +162,8 @@ impl<'src> Lexer<'src> {
             "load" => Token::Load,
             "nonl" => Token::NoNewline,
             "numbers" => Token::ShowLineNumbers,
+            "popup" => Token::Popup,
+            "closepopup" => Token::ClosePopup,
             "replace" => Token::Replace,
             "select" => Token::Select,
             "speed" => Token::Speed,

@@ -33,6 +33,7 @@ pub struct DocState {
     error: Value<String>,
     debug: Value<String>,
     show_line_numbers: Value<bool>,
+    popup: Value<String>,
 }
 
 // -----------------------------------------------------------------------------
@@ -140,81 +141,85 @@ impl Editor {
         let instruction = self.instructions.pop_front();
         match instruction {
             None => return RenderAction::Skip,
-            Some(instruction) => match instruction {
-                Instruction::LoadTypeBuffer(content) => {
-                    // Make markers and all that what what
-                    let (content, markers) = generate(content);
-                    self.type_buffer.push(content);
+            Some(instruction) => {
+                match instruction {
+                    Instruction::LoadTypeBuffer(content) => {
+                        // Make markers and all that what what
+                        let (content, markers) = generate(content);
+                        self.type_buffer.push(content);
 
-                    if let Some(markers) = markers {
-                        self.instructions.push_front(Instruction::AddMarkers {
-                            row: self.cursor.y as usize,
-                            markers,
-                        });
+                        if let Some(markers) = markers {
+                            self.instructions.push_front(Instruction::AddMarkers {
+                                row: self.cursor.y as usize,
+                                markers,
+                            });
+                        }
                     }
-                }
-                Instruction::Insert(content) => {
-                    let (content, markers) = generate(content);
-                    self.cursor.x = 0;
-                    self.doc.insert_str(self.cursor, &content);
-                    if let Some(markers) = markers {
-                        self.instructions.push_front(Instruction::AddMarkers {
-                            row: self.cursor.y as usize,
-                            markers,
-                        });
+                    Instruction::Insert(content) => {
+                        let (content, markers) = generate(content);
+                        self.cursor.x = 0;
+                        self.doc.insert_str(self.cursor, &content);
+                        if let Some(markers) = markers {
+                            self.instructions.push_front(Instruction::AddMarkers {
+                                row: self.cursor.y as usize,
+                                markers,
+                            });
+                        }
                     }
-                }
-                Instruction::AddMarkers { row, markers } => self.doc.add_markers(row, markers),
-                Instruction::Jump(pos) => {
-                    self.cursor += pos;
-                    // Don't move the cursor past zero
-                    self.cursor.x = self.cursor.x.max(0);
-                    self.cursor.y = self.cursor.y.max(0);
-                }
-                Instruction::JumpToMarker(name) => {
-                    let Some(row) = self.doc.lookup_marker(&name).map(|m| m.row) else {
-                        self.error(state, format!("marker \"{name}\" does not exist"));
-                        return RenderAction::Render;
-                    };
-                    self.cursor.y = row as i32;
-                    self.cursor.x = 0;
-                }
-                Instruction::Select(size) if size == Size::ZERO => return RenderAction::Render,
-                Instruction::Select(size) => {
-                    let visual_range = VisualRange::new(self.cursor, size);
-                    self.cursor = visual_range.region.to - Pos::new(1, 1);
-                    self.selected_range = Some(visual_range);
-                }
-                Instruction::Delete => match self.selected_range.take() {
-                    Some(range) => {
-                        self.cursor = range.region.from;
-                        self.doc.delete(range.region);
+                    Instruction::AddMarkers { row, markers } => self.doc.add_markers(row, markers),
+                    Instruction::Jump(pos) => {
+                        self.cursor += pos;
+                        // Don't move the cursor past zero
+                        self.cursor.x = self.cursor.x.max(0);
+                        self.cursor.y = self.cursor.y.max(0);
                     }
-                    None => self.doc.delete(Region::from((self.cursor, Size::new(1, 1)))),
-                },
-                Instruction::Wait(dur) => self.current_time = dur,
-                Instruction::Speed(dur) => self.frame_time = dur,
-                Instruction::FindInCurrentLine(text) => {
-                    let Some(x) = self.doc.find(self.cursor, text) else { return RenderAction::Render };
-                    self.cursor.x = x as i32;
-                }
-                Instruction::LinePause(duration) => self.line_pause = duration,
-                Instruction::SetTitle(title) => state.title.set(title),
-                Instruction::SetJitter(jitter) => self.jitter = jitter,
-                Instruction::ShowLineNumbers(show) => state.show_line_numbers.set(show),
-                Instruction::Clear => {
-                    self.doc.clear();
-                    self.offset = Pos::ZERO;
-                    self.cursor = Pos::ZERO;
-                }
-                Instruction::SetExtension(ext) => self.extension = ext,
-                Instruction::SetTheme(theme) => self.theme = theme,
-                Instruction::LoadAudio(path) => {
-                    if let Err(e) = self.audio.load(path) {
-                        self.error(state, e.to_string());
+                    Instruction::JumpToMarker(name) => {
+                        let Some(row) = self.doc.lookup_marker(&name).map(|m| m.row) else {
+                            self.error(state, format!("marker \"{name}\" does not exist"));
+                            return RenderAction::Render;
+                        };
+                        self.cursor.y = row as i32;
+                        self.cursor.x = 0;
                     }
+                    Instruction::Select(size) if size == Size::ZERO => return RenderAction::Render,
+                    Instruction::Select(size) => {
+                        let visual_range = VisualRange::new(self.cursor, size);
+                        self.cursor = visual_range.region.to - Pos::new(1, 1);
+                        self.selected_range = Some(visual_range);
+                    }
+                    Instruction::Delete => match self.selected_range.take() {
+                        Some(range) => {
+                            self.cursor = range.region.from;
+                            self.doc.delete(range.region);
+                        }
+                        None => self.doc.delete(Region::from((self.cursor, Size::new(1, 1)))),
+                    },
+                    Instruction::Wait(dur) => self.current_time = dur,
+                    Instruction::Speed(dur) => self.frame_time = dur,
+                    Instruction::FindInCurrentLine(text) => {
+                        let Some(x) = self.doc.find(self.cursor, text) else { return RenderAction::Render };
+                        self.cursor.x = x as i32;
+                    }
+                    Instruction::LinePause(duration) => self.line_pause = duration,
+                    Instruction::SetTitle(title) => state.title.set(title),
+                    Instruction::SetJitter(jitter) => self.jitter = jitter,
+                    Instruction::ShowLineNumbers(show) => state.show_line_numbers.set(show),
+                    Instruction::Clear => {
+                        self.doc.clear();
+                        self.offset = Pos::ZERO;
+                        self.cursor = Pos::ZERO;
+                    }
+                    Instruction::SetExtension(ext) => self.extension = ext,
+                    Instruction::SetTheme(theme) => self.theme = theme,
+                    Instruction::LoadAudio(path) => {
+                        if let Err(e) = self.audio.load(path) {
+                            self.error(state, e.to_string());
+                        }
+                    }
+                    Instruction::Popup(message) => state.popup.set(message),
+                    Instruction::ClosePopup => state.popup.set(String::new()),
                 }
-            },
+            }
         }
 
         RenderAction::Render
